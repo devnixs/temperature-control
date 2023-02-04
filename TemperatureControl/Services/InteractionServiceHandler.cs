@@ -72,7 +72,7 @@ public class InteractionServiceHandler
                 await arg.RespondAsync($"Je n'ai pas compris.");
             }
         }
-        else if (arg.CommandName == "temperature" && parameter is long parameterlong)
+        else if (arg.CommandName == "temperature" && parameter is long parameterlong and >= 18 and <= 30)
         {
             await _acMemory.SetTemperature((int)parameterlong);
             await arg.RespondAsync(_status.ToString());
