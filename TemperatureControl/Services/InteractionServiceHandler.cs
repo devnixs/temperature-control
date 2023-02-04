@@ -38,9 +38,25 @@ public class InteractionServiceHandler
 
     private async Task DiscordSocketClientOnSlashCommandExecuted(SocketSlashCommand arg)
     {
+        if (arg.CommandName == "hot")
+        {
+            
+        }else if (arg.CommandName == "cold")
+        {
+            
+        }else if (arg.CommandName == "mode")
+        {
+            
+        }else if (arg.CommandName == "temperature")
+        {
+            // await arg.RespondAsync($"J'ai changé la température à {temp?.Replace("°","").Replace("C","")}°C");
+        }
+        else
+        {
+            await arg.RespondAsync($"Je n'ai pas compris.");
+        }
         var temp = arg.Data.Options.First().Value as string;
         Console.WriteLine(arg.Data);
-        await arg.RespondAsync($"J'ai changé la température à {temp?.Replace("°","").Replace("C","")}°C");
     }
 
     private Task IrOnLog(LogMessage arg)

@@ -5,13 +5,13 @@ namespace TemperatureControl;
 public class SetTemperatureModule :  InteractionModuleBase
 {
     [SlashCommand("temperature", "Choisir la température")]
-    public async Task Echo(string input)
+    public async Task Echo(int input)
     {
         await RespondAsync("OK");
     }
     
     [SlashCommand("on", "Allumer")]
-    public async Task On( )
+    public async Task On()
     {
         await RespondAsync("OK");
     }
@@ -24,7 +24,7 @@ public class SetTemperatureModule :  InteractionModuleBase
     
     
     [SlashCommand("mode", "Changer de mode")]
-    public async Task Mode([Choice("Chaud", "hot"), Choice("Froid", "cold"),Choice("Sec", "dry")] string input)
+    public async Task Mode([Choice("Chaud", "Hot"), Choice("Froid", "Cold"),Choice("Sec", "Dry")] string input)
     {
         await RespondAsync(input);
     }
