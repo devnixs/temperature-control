@@ -8,6 +8,7 @@ using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using TemperatureControl;
+using TemperatureControl.Models;
 using TemperatureControl.Services;
 using RunMode = Discord.Interactions.RunMode;
 
@@ -30,6 +31,8 @@ public class Program
         await _serviceProvider.GetRequiredService<SlashCommandHandler>().Initialize(); 		// Start the command handler service
 
         await _serviceProvider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
+        await _serviceProvider.GetRequiredService<AcMemory>().Initialize();
+        
         await Task.Delay(-1);                               // Keep the program alive
     }
 
@@ -37,6 +40,7 @@ public class Program
     static IServiceProvider CreateProvider()
     {
         var collection = new ServiceCollection();
+        collection.AddHttpClient();
         collection.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
         {
             // Add discord to the collection
@@ -56,6 +60,10 @@ public class Program
             .AddSingleton<InteractionServiceHandler>()
             .AddSingleton<StartupService>()
             .AddSingleton<SlashCommandHandler>()
+            .AddSingleton<AcSender>()
+            .AddSingleton<AcMemory>()
+            .AddSingleton<MessageSender>()
+            .AddSingleton<AcStatus>()
             .AddSingleton<LoggingService>();
 
         return collection.BuildServiceProvider();
