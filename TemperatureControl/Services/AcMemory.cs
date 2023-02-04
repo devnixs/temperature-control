@@ -34,11 +34,15 @@ public class AcMemory
                     _acStatus.Mode = data.Mode;
                 }
             }
-            InitDefaultValues();
+            else
+            {
+                Console.WriteLine("No config file found. Generating one.");
+                InitDefaultValues();
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to deserialize data");
+            Console.WriteLine("Failed to deserialize data: "+e.Message);
             File.Delete(Filename);
             InitDefaultValues();
         }

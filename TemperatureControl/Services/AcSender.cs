@@ -8,7 +8,7 @@ public class AcSender
     private readonly AcStatus _acStatus;
 
     // https://github.com/mattjm/Fujitsu_IR/blob/master/lircd_celcius.conf
-    private string[] commands = new[]
+    private readonly string[] _commands = new[]
     {
         "dry-on",
         "cool-on",
@@ -204,7 +204,7 @@ public class AcSender
         _acStatus = acStatus;
     }
 
-    private string GetKeyFromStatus()
+    private string? GetKeyFromStatus()
     {
         if (!_acStatus.On)
         {
@@ -214,23 +214,41 @@ public class AcSender
         var mode = _acStatus.Mode switch
         {
             AcModes.Hot => "heat",
-            AcModes.Cold => "cold",
+            AcModes.Cold => "cool",
             AcModes.Dry => "dry",
             _ => ""
         };
-        
-        var 
 
+        var temperatures = new decimal[] { _acStatus.Temperature, _acStatus.Temperature + 0.5m, _acStatus.Temperature - 0.5m };
+
+        foreach (var temperature in temperatures)
+        {
+            var key = $"{mode}-auto-{temperature}C";
+            Console.WriteLine($"Looking for command {key}");
+            var command = this._commands.FirstOrDefault(k => k == key);
+            if (command != null)
+            {
+                return command;
+            }
+        }
+
+        return null;
     }
     
     public async Task SendAcValues()
     {
-        
+        var command = GetKeyFromStatus();
+
+        if (command == null)
+        {
+            Console.WriteLine("Could not find command matching current status");
+            return;
+        }
         
         var psi = new ProcessStartInfo
         {
-            FileName = "ping",
-            Arguments = "-c 3 8.8.8.8",
+            FileName = "irsend",
+            Arguments = "send_once fujitsu_heat_ac "+command,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true
@@ -243,9 +261,7 @@ public class AcSender
 
         proc.Start();
 
-
-
-        Task.WaitAll(Task.Run(() =>
+        await Task.WhenAll(Task.Run(() =>
         {
             while (!proc.StandardOutput.EndOfStream)
             {
@@ -261,8 +277,7 @@ public class AcSender
             }
         }));
 
-
-        proc.WaitForExit();
+        await proc.WaitForExitAsync();
         Console.WriteLine(proc.ExitCode);
     }
 }

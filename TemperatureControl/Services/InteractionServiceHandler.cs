@@ -14,11 +14,15 @@ public class InteractionServiceHandler
     private readonly AcMemory _acMemory;
     private readonly AcStatus _status;
     private readonly MessageSender _messageSender;
+    private readonly AcSender _acSender;
 
     public InteractionServiceHandler(InteractionService ir,
         IServiceProvider serviceProvider,
         DiscordSocketClient discordSocketClient,
-        AcMemory acMemory, AcStatus status, MessageSender messageSender)
+        AcMemory acMemory,
+        AcStatus status,
+        MessageSender messageSender,
+        AcSender acSender)
     {
         _ir = ir;
         _serviceProvider = serviceProvider;
@@ -26,6 +30,7 @@ public class InteractionServiceHandler
         _acMemory = acMemory;
         _status = status;
         _messageSender = messageSender;
+        _acSender = acSender;
     }
 
     public async Task Initialize()
@@ -41,8 +46,8 @@ public class InteractionServiceHandler
 
         await _ir.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
 
-        await _ir.RegisterCommandsGloballyAsync(true);
-        await _ir.RegisterCommandsToGuildAsync(guildId, true);
+        // await _ir.RegisterCommandsGloballyAsync(true);
+        // await _ir.RegisterCommandsToGuildAsync(guildId, true);
 
         await _messageSender.SendMessage($"OppyBot - Prêt! \n{_status}");
     }
@@ -53,11 +58,13 @@ public class InteractionServiceHandler
         if (arg.CommandName == "on")
         {
             await _acMemory.Start();
+            await _acSender.SendAcValues();
             await arg.RespondAsync(_status.ToString());
         }
         else if (arg.CommandName == "off")
         {
             await _acMemory.Shutdown();
+            await _acSender.SendAcValues();
             await arg.RespondAsync(_status.ToString());
         }
         else if (arg.CommandName == "mode" && parameter is string parameterstring)
@@ -65,6 +72,7 @@ public class InteractionServiceHandler
             if (Enum.TryParse(parameterstring, true, out AcModes value))
             {
                 await _acMemory.SetMode(value);
+                await _acSender.SendAcValues();
                 await arg.RespondAsync(_status.ToString());
             }
             else
@@ -75,6 +83,7 @@ public class InteractionServiceHandler
         else if (arg.CommandName == "temperature" && parameter is long parameterlong and >= 18 and <= 30)
         {
             await _acMemory.SetTemperature((int)parameterlong);
+            await _acSender.SendAcValues();
             await arg.RespondAsync(_status.ToString());
         }
         else
