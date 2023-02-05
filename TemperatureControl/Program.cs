@@ -27,11 +27,13 @@ public class Program
     {
         _serviceProvider.GetRequiredService<LoggingService>().Initialize();      // Start the logging service
         _serviceProvider.GetRequiredService<CommandHandler>().Initialize(); 		// Start the command handler service
+        _serviceProvider.GetRequiredService<TemperatureReader>().Initialize();
         await _serviceProvider.GetRequiredService<InteractionServiceHandler>().Initialize(); 		// Start the command handler service
         await _serviceProvider.GetRequiredService<SlashCommandHandler>().Initialize(); 		// Start the command handler service
 
         await _serviceProvider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
         await _serviceProvider.GetRequiredService<AcMemory>().Initialize();
+        _serviceProvider.GetRequiredService<StatusUpdater>().Initialize();
         
         await Task.Delay(-1);                               // Keep the program alive
     }
@@ -64,6 +66,8 @@ public class Program
             .AddSingleton<AcMemory>()
             .AddSingleton<MessageSender>()
             .AddSingleton<AcStatus>()
+            .AddSingleton<StatusUpdater>()
+            .AddSingleton<TemperatureReader>()
             .AddSingleton<LoggingService>();
 
         return collection.BuildServiceProvider();

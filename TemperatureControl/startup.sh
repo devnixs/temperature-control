@@ -1,0 +1,1 @@
+﻿tmux new-session -d -s "TempControl" "cd /home/pi/projects/ac-remote-control/TemperatureControl/ && dotnet run"

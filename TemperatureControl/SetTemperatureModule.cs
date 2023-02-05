@@ -22,7 +22,6 @@ public class SetTemperatureModule :  InteractionModuleBase
         await RespondAsync();
     }
     
-    
     [SlashCommand("mode", "Changer de mode")]
     public async Task Mode([Choice("Chaud", "Hot"), Choice("Froid", "Cold"),Choice("Sec", "Dry")] string input)
     {

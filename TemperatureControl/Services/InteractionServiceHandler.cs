@@ -49,7 +49,7 @@ public class InteractionServiceHandler
         // await _ir.RegisterCommandsGloballyAsync(true);
         // await _ir.RegisterCommandsToGuildAsync(guildId, true);
 
-        await _messageSender.SendMessage($"OppyBot - Prêt! \n{_status}");
+        await _messageSender.SendMessage($"OppyBot - Connecté! ✅");
     }
 
     private async Task DiscordSocketClientOnSlashCommandExecuted(SocketSlashCommand arg)
