@@ -27,7 +27,40 @@ public class MessageSender
     {
         var temperatureElapsedTime = temperatureUpdateDate.HasValue ? DateTimeOffset.UtcNow - temperatureUpdateDate.Value : (TimeSpan?) null;
         var humidityElapsedTime = humidityUpdateDate.HasValue ? DateTimeOffset.UtcNow - humidityUpdateDate.Value : (TimeSpan?) null;
-        
+
+        var fields = new List<Field>
+        {
+            new Field()
+            {
+                Inline = true,
+                Name = "Temperature",
+                Value = temperature.HasValue ? $"{temperature.Value:00.0}°C {RenderElapsedTime(temperatureElapsedTime)}" : "-",
+            },
+            new Field()
+            {
+                Inline = true,
+                Name = "Humidity",
+                Value = humidity.HasValue ? $"{humidity.Value:00}% {RenderElapsedTime(humidityElapsedTime)}" : "-",
+            },
+            new Field()
+            {
+                Inline = false,
+                Name = "Config",
+                Value = status.ToString(),
+            }
+        };
+
+        for (var i = 0; i < status.Automations.Length; i++)
+        {
+            var automation = status.Automations[i];
+            fields.Add(new Field()
+            {
+                Inline = false,
+                Name = $"Automation #{i+1:00}",
+                Value = automation.ToString(),
+            });
+        }
+
         var msg = new DiscordWebhookModel()
         {
             Embeds = new Embed[]
@@ -37,27 +70,7 @@ public class MessageSender
                     Title = "Status",
                     Description = "",
                     Color = 15258703,
-                    Fields = new Field[]
-                    {
-                        new Field()
-                        {
-                            Inline = true,
-                            Name = "Température",
-                            Value = temperature.HasValue ? $"{temperature.Value:00.0}°C {RenderElapsedTime(temperatureElapsedTime)}" : "-",
-                        },
-                        new Field()
-                        {
-                            Inline = true,
-                            Name = "Humidité",
-                            Value = humidity.HasValue ? $"{humidity.Value:00}% {RenderElapsedTime(humidityElapsedTime)}" : "-",
-                        },
-                        new Field()
-                        {
-                            Inline = false,
-                            Name = "Consigne",
-                            Value = status.ToString(),
-                        }
-                    }
+                    Fields = fields.ToArray()
                 }
             }
         };

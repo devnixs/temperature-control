@@ -34,6 +34,7 @@ public class Program
         await _serviceProvider.GetRequiredService<StartupService>().StartAsync();       // Start the startup service
         await _serviceProvider.GetRequiredService<AcMemory>().Initialize();
         _serviceProvider.GetRequiredService<StatusUpdater>().Initialize();
+        _serviceProvider.GetRequiredService<AutomationHandler>().Initialize();
         
         await Task.Delay(-1);                               // Keep the program alive
     }
@@ -59,6 +60,7 @@ public class Program
             }))
             .AddSingleton<Random>()        
             .AddSingleton<CommandHandler>()
+            .AddSingleton<AutomationHandler>()
             .AddSingleton<InteractionServiceHandler>()
             .AddSingleton<StartupService>()
             .AddSingleton<SlashCommandHandler>()

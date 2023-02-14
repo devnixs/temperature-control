@@ -32,6 +32,7 @@ public class AcMemory
                     _acStatus.On = data.On;
                     _acStatus.Temperature = data.Temperature;
                     _acStatus.Mode = data.Mode;
+                    _acStatus.Automations = data.Automations;
                 }
             }
             else
@@ -56,6 +57,7 @@ public class AcMemory
             _acStatus.Mode = AcModes.Hot;
             _acStatus.On = true;
             _acStatus.Temperature = 22;
+            _acStatus.Automations = Array.Empty<Automation>();
         }
         else
         {
@@ -63,6 +65,7 @@ public class AcMemory
             _acStatus.Mode = AcModes.Cold;
             _acStatus.On = true;
             _acStatus.Temperature = 25;
+            _acStatus.Automations = Array.Empty<Automation>();
         }
     }
 
@@ -101,6 +104,18 @@ public class AcMemory
     public async Task SetMode(AcModes mode)
     {
         _acStatus.Mode = mode;
+        await SaveData();
+    }
+    
+    public async Task AddAutomation(Automation automation)
+    {
+        _acStatus.Automations = _acStatus.Automations.Concat(new []{automation}).ToArray();
+        await SaveData();
+    }
+    
+    public async Task RemoveAutomation(int index)
+    {
+        _acStatus.Automations = _acStatus.Automations.Where((_, i) => index != i).ToArray();
         await SaveData();
     }
 }

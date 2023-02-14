@@ -15,6 +15,16 @@ public class StatusUpdater
         _acStatus = acStatus;
     }
 
+    public async Task SendStatus()
+    {
+        var readings = _temperatureReader.Read();
+        await _messageSender.SendStatus(readings.Temperature,
+            readings.TemperatureLastUpdateDate,
+            readings.Humidity,
+            readings.HumidityLastUpdateDate,
+            _acStatus);
+    }
+    
     public void Initialize()
     {
         var _ = Task.Run(async () =>
@@ -22,12 +32,7 @@ public class StatusUpdater
             await Task.Delay(TimeSpan.FromMinutes(1));
             while (true)
             {
-                var readings = _temperatureReader.Read();
-                await _messageSender.SendStatus(readings.Temperature,
-                    readings.TemperatureLastUpdateDate,
-                    readings.Humidity,
-                    readings.HumidityLastUpdateDate,
-                    _acStatus);
+                await SendStatus();
                 await Task.Delay(TimeSpan.FromHours(1));
             }
         });
