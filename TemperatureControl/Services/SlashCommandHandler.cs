@@ -3,7 +3,6 @@ using Discord.Interactions;
 using Discord.Interactions.Builders;
 using Discord.Net;
 using Discord.WebSocket;
-using Newtonsoft.Json;
 using SlashCommandBuilder = Discord.Interactions.Builders.SlashCommandBuilder;
 
 namespace TemperatureControl.Services;

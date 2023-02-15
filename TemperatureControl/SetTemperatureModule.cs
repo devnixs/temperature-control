@@ -32,7 +32,7 @@ public class SetTemperatureModule :  InteractionModuleBase
     public async Task AddAutomation(
         [Summary("Command", "Can be: on, off, or a temperature")] string command, 
         [Summary("Hour","Hour of the day")] int hour,
-        [Summary("DayOfWeek", "Day of week. Can be set to *")] string dayOfWeek)
+        [Summary("DayOfWeek", "Day of week. Can be set to Monday, Tuesday..., Week, Weekend or *")] string dayOfWeek)
     {
         await RespondAsync(command);
     }
@@ -44,7 +44,7 @@ public class SetTemperatureModule :  InteractionModuleBase
     }
     
     
-    [SlashCommand("status", "Get Current Status")]
+    [SlashCommand("query", "Get Current Status")]
     public async Task Cancel()
     {
         await RespondAsync("OK");

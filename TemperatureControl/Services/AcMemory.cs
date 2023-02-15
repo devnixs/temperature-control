@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using TemperatureControl.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 

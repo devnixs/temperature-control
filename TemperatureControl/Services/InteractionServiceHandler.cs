@@ -113,9 +113,10 @@ public class InteractionServiceHandler
             await _acMemory.RemoveAutomation((int)parameter1long - 1);
             await _statusUpdater.SendStatus();
         }
-        else if (arg.CommandName == "status")
+        else if (arg.CommandName == "query")
         {
             await _statusUpdater.SendStatus();
+            await arg.RespondAsync($":thumbsup:");
         }
         else
         {
