@@ -25,6 +25,7 @@ public class Program
 
     public async Task MainAsync()
     {
+        Console.WriteLine("Build 2023-07-09");
         _serviceProvider.GetRequiredService<LoggingService>().Initialize();      // Start the logging service
         _serviceProvider.GetRequiredService<CommandHandler>().Initialize(); 		// Start the command handler service
         _serviceProvider.GetRequiredService<TemperatureReader>().Initialize();

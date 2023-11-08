@@ -105,17 +105,17 @@ public class AutomationHandler
             if (mostSpecific.Automation.On == true)
             {
                 await _acMemory.Start();
-                await _acSender.SendAcValues();
+                await _acSender.SendAcValues(ActionType.TurnOn);
             }
             else if (mostSpecific.Automation.On == false)
             {
                 await _acMemory.Shutdown();
-                await _acSender.SendAcValues();
+                await _acSender.SendAcValues(ActionType.TurnOff);
             }
             else if (mostSpecific.Automation.Temperature.HasValue)
             {
                 await _acMemory.SetTemperature(mostSpecific.Automation.Temperature.Value);
-                await _acSender.SendAcValues();
+                await _acSender.SendAcValues(ActionType.ChangeTemperature);
             }
         }
     }

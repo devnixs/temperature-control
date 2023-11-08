@@ -23,8 +23,20 @@ public class StatusUpdater
             readings.Humidity,
             readings.HumidityLastUpdateDate,
             _acStatus);
+
+        // Health Check
+        try
+        {
+            using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(10);
+            await client.GetAsync("https://hc-ping.com/3b3f7596-8d96-48dc-bad9-e314acd67188");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ping failed: {ex.Message}");
+        }
     }
-    
+
     public void Initialize()
     {
         var _ = Task.Run(async () =>

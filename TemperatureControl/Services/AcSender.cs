@@ -198,7 +198,7 @@ public class AcSender
         "dry-quiet-30C",
         "dry-quiet-31C",
     };
-    
+
     public AcSender(AcStatus acStatus)
     {
         _acStatus = acStatus;
@@ -223,7 +223,7 @@ public class AcSender
 
         foreach (var temperature in temperatures)
         {
-            var key = $"{mode}-auto-{temperature}C";
+            var key = $"{mode}-low-{temperature}C";
             Console.WriteLine($"Looking for command {key}");
             var command = this._commands.FirstOrDefault(k => k == key);
             if (command != null)
@@ -234,9 +234,10 @@ public class AcSender
 
         return null;
     }
-    
-    public async Task SendAcValues()
+
+    public async Task SendAcValues(ActionType actionType)
     {
+        Console.WriteLine("Sending raw command: "+ actionType);
         var command = GetKeyFromStatus();
 
         if (command == null)
@@ -244,15 +245,30 @@ public class AcSender
             Console.WriteLine("Could not find command matching current status");
             return;
         }
-        
+
+        // If we're turning on to a cool-request, we need to send a cool-on first
+        if (actionType == ActionType.TurnOn && _acStatus.Mode == AcModes.Cold)
+        {
+            Console.WriteLine("We're turning on to a cool-request, so we need to send a cool-on first");
+            await SendRawCommand("cool-on");
+            await Task.Delay(2000);
+        }
+
+        await SendRawCommand(command);
+    }
+
+    private static async Task SendRawCommand(string command)
+    {
+        var raw = "send_once fujitsu_heat_ac " + command;
         var psi = new ProcessStartInfo
         {
             FileName = "irsend",
-            Arguments = "send_once fujitsu_heat_ac "+command,
+            Arguments = raw,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
+        Console.WriteLine("Sending command " + raw);
 
         var proc = new Process
         {
@@ -280,4 +296,12 @@ public class AcSender
         await proc.WaitForExitAsync();
         Console.WriteLine(proc.ExitCode);
     }
+}
+
+public enum ActionType
+{
+    TurnOn,
+    TurnOff,
+    ChangeTemperature,
+    ChangeMode,
 }

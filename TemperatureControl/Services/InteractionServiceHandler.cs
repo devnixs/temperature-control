@@ -64,13 +64,13 @@ public class InteractionServiceHandler
         if (arg.CommandName == "on")
         {
             await _acMemory.Start();
-            await _acSender.SendAcValues();
+            await _acSender.SendAcValues(ActionType.TurnOn);
             await arg.RespondAsync($":thumbsup:");
         }
         else if (arg.CommandName == "off")
         {
             await _acMemory.Shutdown();
-            await _acSender.SendAcValues();
+            await _acSender.SendAcValues(ActionType.TurnOff);
             await arg.RespondAsync($":thumbsup:");
         }
         else if (arg.CommandName == "mode" && parameter1 is string parameterstring)
@@ -78,7 +78,7 @@ public class InteractionServiceHandler
             if (Enum.TryParse(parameterstring, true, out AcModes value))
             {
                 await _acMemory.SetMode(value);
-                await _acSender.SendAcValues();
+                await _acSender.SendAcValues(ActionType.ChangeMode);
                 await arg.RespondAsync($":thumbsup:");
             }
             else
@@ -89,7 +89,7 @@ public class InteractionServiceHandler
         else if (arg.CommandName == "temperature" && parameter1 is long parameterlong and >= 18 and <= 30)
         {
             await _acMemory.SetTemperature((int)parameterlong);
-            await _acSender.SendAcValues();
+            await _acSender.SendAcValues(ActionType.ChangeTemperature);
             await arg.RespondAsync($":thumbsup:");
         }
         else if (arg.CommandName == "automate" && parameter1 is string parameter1string && parameter2 is long parameter2long &&
